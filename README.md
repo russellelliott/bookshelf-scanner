@@ -1,40 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Bookshelf Scanner
 
-## Getting Started
+A Next.js application designed to catalogue books by scanning images of bookshelves.
 
-First, run the development server:
+## Project Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The project works in tandem with a specific folder structure for organizing images. Images are sourced from a `Library Images` folder located immediately outside the project root. This folder is organized by room:
+
+```
+../Library Images/
+├── Espana Ct Office/
+└── Santa Cruz Cottage/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application scans these directories to find bookshelf images to process.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Configuration
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+This application relies on two external APIs:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+1.  **Google Gemini API** (`GEMINI_API_KEY`): Used in the backend (`pages/api/scan-shelf.js`) to analyze images and identify book titles/authors.
+2.  **Perplexity API** (`PERPLEXITY_API_KEY`): Used in the backend (`pages/api/enrich-book.js`) to enrich the book data with details like ISBN, publisher, and publication year.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ensure these keys are defined in your environment variables (`.env` or `.env.local`) for the application to function correctly.
 
-## Learn More
+Google Drive: https://drive.google.com/drive/u/0/folders/1urR9SDoRMd7VVGb4Uy1K-2HVrme9WmEC
 
-To learn more about Next.js, take a look at the following resources:
+## Running the Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+This application is designed to be **hosted locally**. It relies on access to the local file system to scan the library images.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To run the application:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+1.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+2.  Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
