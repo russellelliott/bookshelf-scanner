@@ -8,8 +8,34 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [enrichedData, setEnrichedData] = useState({});
+  const [gpsData, setGpsData] = useState(null);
+  const [extractingGps, setExtractingGps] = useState(false);
 
   const folders = ["Espana Ct Office", "Santa Cruz Cottage"];
+
+  const handleExtractGPS = async () => {
+    setExtractingGps(true);
+    setGpsData(null);
+    try {
+      const res = await fetch('/api/extract-gps', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: selectedFolder }),
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        setGpsData(data);
+      } else {
+        alert(data.message || 'Failed to extract GPS data');
+      }
+    } catch (error) {
+      console.error('Error extracting GPS:', error);
+      alert('An error occurred during GPS extraction');
+    } finally {
+      setExtractingGps(false);
+    }
+  };
 
   const handleScan = async () => {
     setLoading(true);
@@ -91,6 +117,51 @@ export default function Home() {
                 {loading ? 'Scanning Images...' : 'Scan For Books'}
               </button>
             </div>
+          </div>
+
+          <div style={{ marginBottom: '2rem', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
+            <h2>GPS Location Extraction</h2>
+            <p>Extract GPS coordinates from all images in <strong>{selectedFolder}</strong>:</p>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+              <button
+                onClick={handleExtractGPS}
+                disabled={extractingGps}
+                style={{ padding: '0.5rem 1rem', fontSize: '1rem', cursor: extractingGps ? 'wait' : 'pointer' }}
+              >
+                {extractingGps ? 'Extracting GPS data...' : 'Get GPS for Folder'}
+              </button>
+            </div>
+            
+            {gpsData && (
+              <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#fff', border: '1px solid #ddd', borderRadius: '4px' }}>
+                <h3>Extracted GPS Data ({gpsData.gpsData.length} images with GPS):</h3>
+                <p>Checked {gpsData.imageCount} images in {gpsData.folder}.</p>
+                {gpsData.gpsData.length > 0 ? (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                    <thead>
+                        <tr style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>
+                            <th style={{ padding: '8px' }}>File</th>
+                            <th style={{ padding: '8px' }}>Latitude</th>
+                            <th style={{ padding: '8px' }}>Longitude</th>
+                            <th style={{ padding: '8px' }}>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {gpsData.gpsData.map((item, idx) => (
+                            <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
+                                <td style={{ padding: '8px' }}>{item.fileName}</td>
+                                <td style={{ padding: '8px' }}>{item.latitude}</td>
+                                <td style={{ padding: '8px' }}>{item.longitude}</td>
+                                <td style={{ padding: '8px' }}>{item.dateStamp} {item.timeStamp}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p style={{ color: '#666' }}>No GPS coordinates found in any images.</p>
+                )}
+              </div>
+            )}
           </div>
 
           {books.length > 0 && (
