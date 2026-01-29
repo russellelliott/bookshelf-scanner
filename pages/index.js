@@ -183,6 +183,7 @@ export default function Home() {
                   <tr style={{ borderBottom: '2px solid #eaeaea', backgroundColor: '#333', color: '#fff' }}>
                     <th style={{ padding: '10px' }}>Detected Title</th>
                     <th style={{ padding: '10px' }}>Detected Author</th>
+                    <th style={{ padding: '10px' }}>Image Source</th>
                     <th style={{ padding: '10px' }}>Details (Perplexity)</th>
                   </tr>
                 </thead>
@@ -191,6 +192,9 @@ export default function Home() {
                     <tr key={idx} style={{ borderBottom: '1px solid #eaeaea' }}>
                       <td style={{ padding: '10px', verticalAlign: 'top' }}>{book.title}</td>
                       <td style={{ padding: '10px', verticalAlign: 'top' }}>{book.author}</td>
+                      <td style={{ padding: '10px', verticalAlign: 'top' }}>
+                        {book.sources ? (Array.isArray(book.sources) ? book.sources.join(', ') : book.sources) : '-'}
+                      </td>
                       <td style={{ padding: '10px', fontSize: '0.9em', verticalAlign: 'top' }}>
                         {enrichedData[book.title] ? (
                           enrichedData[book.title].error ? (
